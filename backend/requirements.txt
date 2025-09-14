@@ -2,3 +2,4 @@ fastapi
 uvicorn
 pydub
 python-multipart
+pillow
