@@ -3,3 +3,5 @@ uvicorn
 pydub
 python-multipart
 pillow
+numpy
+scipy
