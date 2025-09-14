@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steganography Forensics</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f9; }
+    h1 { color: #333; }
+    input, button { margin: 5px 0; padding: 8px; font-size: 16px; }
+    #preview img { max-width: 300px; margin-top: 10px; border-radius: 10px; }
+    #output { margin-top: 15px; font-weight: bold; color: #555; }
+    .btn { cursor: pointer; border: none; border-radius: 5px; background: #007bff; color: white; }
+    .btn:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+  <h1>Steganography Forensics Tool</h1>
+
+  <label>Select Image:</label><br>
+  <input type="file" id="fileInput" accept="image/*"><br>
+  <span id="fileName">No file selected</span><br><br>
+
+  <label>Message to Hide:</label><br>
+  <input type="text" id="message" placeholder="Enter message"><br>
+
+  <button class="btn" onclick="encode()">Encode & Download</button>
+  <button class="btn" onclick="decode()">Decode</button>
+  <button class="btn" onclick="detect()">Detect Stego</button>
+
+  <div id="preview"></div>
+  <div id="output"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

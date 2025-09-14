@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Steganography Forensics</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🔐 Steganography Forensics</h1>
+      <p class="subtitle">Encode • Decode • Detect — Demo web UI</p>
+    </header>
+
+    <main class="card">
+      <div class="row">
+        <label class="file-label">📷 Choose an image</label>
+        <input id="fileInput" type="file" accept="image/*" />
+        <div id="fileName" class="file-name">No file selected</div>
+      </div>
+
+      <div class="row">
+        <label class="msg-label">💬 Secret message (for Encode)</label>
+        <textarea id="message" placeholder="Type secret message to hide..."></textarea>
+      </div>
+
+      <div class="row buttons">
+        <button class="btn encode" onclick="encode()">✨ Encode</button>
+        <button class="btn decode" onclick="decode()">📩 Decode</button>
+        <button class="btn detect" onclick="detect()">🤖 Detect</button>
+      </div>
+
+      <div id="preview" class="preview"></div>
+
+      <div id="output" class="output">⚡ Output will appear here</div>
+    </main>
+
+    <footer>
+      <small>Make sure backend is running at <code>http://127.0.0.1:8000</code></small>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

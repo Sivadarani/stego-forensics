@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Steganography Forensics Tool</title>
+<style>
+  body { font-family: "Segoe UI", Tahoma, sans-serif; background: linear-gradient(120deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: #333; display: flex; justify-content: center; padding: 30px; min-height: 100vh; }
+  @keyframes gradientBG {0% {background-position:0% 50%;}50% {background-position:100% 50%;}100% {background-position:0% 50%;}}
+  .container { background: rgba(255,255,255,0.9); padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width:700px; width:100%; text-align:center; backdrop-filter: blur(10px);}
+  h2 { margin-bottom: 20px; color:#ff0066; text-shadow:1px 1px 5px rgba(0,0,0,0.2);}
+  input[type="file"], input[type="text"], input[type="number"] {margin:10px 0; padding:10px; width:90%; border:2px solid #ddd; border-radius:10px; transition:0.3s;}
+  input[type="text"]:focus, input[type="number"]:focus {border-color:#ff0066; outline:none; box-shadow:0 0 8px rgba(255,0,102,0.4);}
+  button {margin:6px; padding:10px 18px; border:none; border-radius:12px; color:white; font-weight:bold; cursor:pointer; transition: transform 0.2s, box-shadow 0.2s;}
+  button:hover {transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.25);}
+  button:nth-child(1){background:linear-gradient(45deg,#28a745,#81c784);}
+  button:nth-child(2){background:linear-gradient(45deg,#6f42c1,#a084f5);}
+  button:nth-child(3){background:linear-gradient(45deg,#007bff,#66b2ff);}
+  #preview img {max-width:100%; max-height:300px; border-radius:15px; border:4px solid #ff0066; margin-top:10px; box-shadow:0 8px 25px rgba(0,0,0,0.2); transition: opacity 0.5s ease-in-out;}
+  #output, #audioOutput {margin-top:20px; padding:14px; border-radius:12px; font-weight:bold; font-size:1.1em;}
+  .success {background:#d4edda; color:#155724; border:2px solid #28a745;}
+  .error {background:#f8d7da; color:#721c24; border:2px solid #dc3545;}
+  .info {background:#d1ecf1; color:#0c5460; border:2px solid #17a2b8;}
+  .purple {background:#e6d9f3; color:#4a148c; border:2px solid #6f42c1;}
+  hr {margin:30px 0; border:none; border-top:2px solid #ccc;}
+  audio {margin-top:10px; width:90%; border-radius:10px; outline:none;}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>🎨 Steganography Forensics Tool</h2>
+
+<!-- IMAGE SECTION -->
+<h3>📷 Image Steganography</h3>
+<input type="file" id="fileInput" accept="image/*"><br>
+<span id="fileName">No file selected</span><br><br>
+<input type="text" id="message" placeholder="Enter secret message"><br>
+<div>
+  <button onclick="encode()">Encode & Download</button>
+  <button onclick="decode()">Decode</button>
+  <button onclick="detect()">Detect Stego</button>
+</div>
+<div id="preview"><h4>📷 Image Preview:</h4><img id="selectedImage" src="" alt="No image selected"></div>
+<div id="output" class="info"></div>
+
+<hr>
+
+<!-- AUDIO SECTION -->
+<h3>🎵 Audio Steganography</h3>
+<input type="file" id="audioInput" accept=".wav"><br>
+<span id="audioFileName">No audio selected</span><br><br>
+<input type="text" id="audioMessage" placeholder="Enter secret message"><br>
+<input type="number" id="audioMsgLength" placeholder="Enter message length"><br><br>
+<div>
+  <button onclick="encodeAudio()">Encode Audio</button>
+  <button onclick="decodeAudio()">Decode Audio</button>
+</div>
+<div id="audioPreview"><audio id="audioPlayer" controls src=""></audio></div>
+<div id="audioOutput" class="info"></div>
+</div>
+
+<script>
+// IMAGE SCRIPT
+const fileInput = document.getElementById("fileInput");
+const messageInput = document.getElementById("message");
+const fileNameDisplay = document.getElementById("fileName");
+const selectedImage = document.getElementById("selectedImage");
+const output = document.getElementById("output");
+
+fileInput.addEventListener("change", ()=>{
+  const file = fileInput.files[0];
+  if(file){ fileNameDisplay.textContent=file.name; selectedImage.src=URL.createObjectURL(file);}
+  else{fileNameDisplay.textContent="No file selected"; selectedImage.src="";}
+});
+
+async function encode(){
+  const file=fileInput.files[0]; const msg=messageInput.value;
+  if(!file||!msg){output.textContent="⚠ Please select a file and enter a message."; output.className="error"; return;}
+  const formData=new FormData(); formData.append("file",file); formData.append("message",msg);
+  try{
+    const res=await fetch("http://127.0.0.1:8000/encode",{method:"POST", body:formData});
+    if(!res.ok){const err=await res.json(); output.textContent="Error: "+(err.detail||"Unknown"); output.className="error"; return;}
+    const blob=await res.blob(); const url=URL.createObjectURL(blob); selectedImage.src=url;
+    const a=document.createElement("a"); a.href=url; a.download="encoded.png"; document.body.appendChild(a); a.click(); a.remove();
+    output.textContent="✅ Encoded image previewed and downloaded!"; output.className="success";
+  }catch(e){console.error(e); output.textContent="⚠ Something went wrong!"; output.className="error";}
+}
+
+async function decode(){
+  const file=fileInput.files[0]; if(!file){output.textContent="⚠ Please select a file first."; output.className="error"; return;}
+  const fd=new FormData(); fd.append("file",file);
+  try{
+    const res=await fetch("http://127.0.0.1:8000/decode",{method:"POST", body:fd});
+    if(!res.ok){const err=await res.json(); output.textContent="Error: "+(err.detail||"Unknown"); output.className="error"; return;}
+    const result=await res.json(); output.textContent="💬 Hidden message: "+result.message; output.className="purple";
+  }catch(e){console.error(e); output.textContent="⚠ Something went wrong while decoding!"; output.className="error";}
+}
+
+async function detect(){
+  const file=fileInput.files[0]; if(!file){output.textContent="⚠ Please select a file first."; output.className="error"; return;}
+  const fd=new FormData(); fd.append("file",file);
+  try{
+    const res=await fetch("http://127.0.0.1:8000/detect",{method:"POST", body:fd});
+    if(!res.ok){const err=await res.json(); output.textContent="Error: "+(err.detail||"Unknown"); output.className="error"; return;}
+    const result=await res.json(); output.textContent=`🔎 Detection Result: ${result.result} (Mode: ${result.mode||"N/A"})`; output.className="info";
+  }catch(e){console.error(e); output.textContent="⚠ Something went wrong while detecting!"; output.className="error";}
+}
+
+// AUDIO SCRIPT
+const audioInput=document.getElementById("audioInput");
+const audioMessageInput=document.getElementById("audioMessage");
+const audioMsgLengthInput=document.getElementById("audioMsgLength");
+const audioOutput=document.getElementById("audioOutput");
+const audioFileNameDisplay=document.getElementById("audioFileName");
+const audioPlayer=document.getElementById("audioPlayer");
+
+audioInput.addEventListener("change", ()=>{
+  const file=audioInput.files[0];
+  if(file){ audioFileNameDisplay.textContent=file.name; audioPlayer.src=URL.createObjectURL(file);}
+  else{ audioFileNameDisplay.textContent="No audio selected"; audioPlayer.src="";}
+});
+
+async function encodeAudio(){
+  const file=audioInput.files[0]; const msg=audioMessageInput.value;
+  if(!file||!msg){ audioOutput.textContent="⚠ Please select WAV file and enter a message."; audioOutput.className="error"; return;}
+  const fd=new FormData(); fd.append("file",file); fd.append("message",msg);
+  try{
+    const res=await fetch("http://127.0.0.1:8000/encode_audio",{method:"POST", body:fd});
+    if(!res.ok){const err=await res.json(); audioOutput.textContent="Error: "+(err.detail||"Unknown"); audioOutput.className="error"; return;}
+    const blob=await res.blob(); const url=URL.createObjectURL(blob); audioPlayer.src=url;
+    const a=document.createElement("a"); a.href=url; a.download="encoded_audio.wav"; document.body.appendChild(a); a.click(); a.remove();
+    audioOutput.textContent="✅ Encoded audio previewed and downloaded!"; audioOutput.className="success";
+  }catch(e){console.error(e); audioOutput.textContent="⚠ Something went wrong!"; audioOutput.className="error";}
+}
+
+async function decodeAudio(){
+  const file=audioInput.files[0]; const length=parseInt(audioMsgLengthInput.value);
+  if(!file||!length||isNaN(length)){ audioOutput.textContent="⚠ Please select WAV file and enter valid message length."; audioOutput.className="error"; return;}
+  const fd=new FormData(); fd.append("file",file); fd.append("msg_length",length);
+  try{
+    const res=await fetch("http://127.0.0.1:8000/decode_audio",{method:"POST", body:fd});
+    if(!res.ok){const err=await res.json(); audioOutput.textContent="Error: "+(err.detail||"Unknown"); audioOutput.className="error"; return;}
+    const result=await res.json(); audioOutput.textContent="💬 Hidden message: "+result.message; audioOutput.className="purple";
+  }catch(e){console.error(e); audioOutput.textContent="⚠ Something went wrong while decoding!"; audioOutput.className="error";}
+}
+</script>
+</body>
+</html>

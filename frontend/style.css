@@ -1,0 +1,162 @@
+/* style.css */
+
+/* Reset & font */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body with gradient */
+body {
+  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Center wrapper */
+.wrap {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 5px;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+header .subtitle {
+  font-size: 1rem;
+  color: #f0f0f0;
+}
+
+/* Card */
+.card {
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Rows */
+.row {
+  margin-bottom: 20px;
+}
+
+.file-label,
+.msg-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+input[type="file"] {
+  display: block;
+  width: 100%;
+}
+
+.file-name {
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  resize: vertical;
+  background: #f7f9fc;
+}
+
+/* Buttons */
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn {
+  flex: 1;
+  padding: 12px 15px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #fff;
+}
+
+.btn.encode {
+  background: #ff6f61; /* coral red */
+}
+
+.btn.encode:hover {
+  background: #ff3b2e;
+}
+
+.btn.decode {
+  background: #6a5acd; /* slate blue */
+}
+
+.btn.decode:hover {
+  background: #483d8b;
+}
+
+.btn.detect {
+  background: #00b894; /* teal green */
+}
+
+.btn.detect:hover {
+  background: #009977;
+}
+
+/* Preview & output */
+.preview {
+  margin-top: 15px;
+  text-align: center;
+  background: #f1f1f1;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.output {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fdf6e3; /* light yellow */
+  border-radius: 10px;
+  font-size: 0.95rem;
+  min-height: 40px;
+  color: #333;
+}
+
+/* Footer */
+footer {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+footer code {
+  background: rgba(255,255,255,0.3);
+  padding: 2px 5px;
+  border-radius: 4px;
+}
